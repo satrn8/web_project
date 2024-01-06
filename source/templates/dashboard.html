@@ -1,23 +1,41 @@
-{% include "base.html" %}
-{% include "navbar.html" %}
+{% extends "base.html" %}
 
+{% block content%}
 <div class="container-xxl">
     <div class="row align-items-start">
         <div class="col">
             <h3>Создано</h3>
-            <p>Задача N</p>
-            <p>Исполнитель</p>
-            <p>Лишь некоторые особенности внутренней политики и по сей день остаются уделом либералов, которые жаждут быть функционально разнесены на независимые элементы. Как принято считать, независимые государства призывают нас к новым свершениям, которые, в свою очередь, должны быть функционально разнесены на независимые элементы. Высокий уровень вовлечения представителей целевой аудитории является четким доказательством простого факта: синтетическое тестирование однозначно определяет каждого участника как способного принимать собственные решения касаемо поставленных обществом задач.</p>
+            {% for task in create %}
+            <p>Задача {{ task.number_task }}</p>
+            <p>Исполнитель {{ task.author }}</p>
+            <p>{{ task.description }}</p>
+            {% endfor %}
         </div>
         <div class="col">
             <h3>В работе</h3>
+            {% for task in in_progress %}
+            <p>Задача {{ task.number_task }}</p>
+            <p>Исполнитель {{ task.author }}</p>
+            <p>{{ task.description }}</p>
+            {% endfor %}
         </div>
         <div class="col">
             <h3>Выполнено</h3>
+            {% for task in done %}
+            <p>Задача {{ task.number_task }}</p>
+            <p>Исполнитель {{ task.author }}</p>
+            <p>{{ task.description }}</p>
+            {% endfor %}
         </div>
         <div class="col">
             <h3>Закрыто</h3>
+            {% for task in closed %}
+            <p>Задача {{ task.number_task }}</p>
+            <p>Исполнитель {{ task.author }}</p>
+            <p>{{ task.description }}</p>
+            {% endfor %}
         </div>
     </div>
 
 </div>
+{% endblock %}
