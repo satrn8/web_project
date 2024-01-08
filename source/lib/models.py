@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
-from db import Base, engine
+from config import SQLALCHEMY_DATABASE_URI
+from db import DB
 
+Base = DB(SQLALCHEMY_DATABASE_URI)
 
 class User(Base):
     id = Column(Integer, primary_key=True)
