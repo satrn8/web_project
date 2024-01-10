@@ -11,7 +11,8 @@ class DB:
         self.connect_data = connect_data
         self.db_session = None
         self.engine = None
-        self.Base = None
+        self.base = None
+        self.connection = None
 
     def connect(self) -> object:
         # подключение к базе данных
@@ -31,8 +32,8 @@ class DB:
         # Создание сессии
         if self.engine:
             self.db_session = scoped_session(sessionmaker(bind=self.engine))
-            self.Base = declarative_base()
-            self.Base.query = self.db_session.query_property()
+            self.base = declarative_base()
+            self.base.query = self.db_session.query_property()
         else:
             print("DB is not connected")
 
