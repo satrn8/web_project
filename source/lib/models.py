@@ -1,68 +1,75 @@
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from config import SQLALCHEMY_DATABASE_URI
+from db import DB
 
-db = SQLAlchemy()
+Base = DB(SQLALCHEMY_DATABASE_URI)
 
-class Board(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
-    # user id
-    owner = db.Column(db.Integer)
+class User(Base):
+    id = Column(Integer, primary_key=True)
+    login = Column(String(64), index=True, unique=True)
+    password = Column(String(128))
+    email = Column(String(64), index=True, unique=True)
+    fist_name = Column(String(64), index=True, unique=False)
+    last_name = Column(String(64), index=True, unique=False)
+    patronymic = Column(String(64), index=True, unique=False)   
+    position = Column(String(64), index=True, unique=False)
+    role = Column(String(10), index=True)
 
     def __repr__(self):
-        return '<Board {}>'.format(self.name)
+        return '<User {}>'.format(self.login)
 
-class Comment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+class Board(Base):
+    id = Column(Integer(), primary_key=True)
+    title = Column(String(64)) 
     # user id
-    author = db.Column(db.Integer)
-    text = db.Column(db.String)
-    published = db.Column(db.DateTime, nullable=False)
-    task_id = db.Column(db.Integer)
+    owner = Column(Integer, ForeignKey(User.id))
+
+    def __repr__(self):
+        return '<Board {}>'.format(self.title)
+
+class Task(Base):
+    id = Column(Integer, primary_key=True)
+    board_id = Column(Integer, ForeignKey(Board.id))
+    title = Column(String(64))
+    description = Column(String)
+    # user id
+    author = Column(Integer, ForeignKey(User.id))
+    # user id
+    assigned_to = Column(Integer, ForeignKey(User.id))
+    published = Column(Date, nullable=False)
+    finish_date = Column(Date)
+    planned_finish_date = Column(Date)
+    planned_spent_time = Column(Integer)
+    # В часах
+    spent_time = Column(Integer)
+    status = Column(String)
+
+    def __repr__(self):
+        return '<Task {}>'.format(self.title)
+
+
+class Comment(Base):
+    id = Column(Integer, primary_key=True)
+    task_id = Column(Integer, ForeignKey(Task.id))
+    # user id
+    author = Column(Integer, ForeignKey(User.id))
+    text = Column(String)
+    published = Column(Date, nullable=False)
+    
 
     def __repr__(self):
         return '<Comment {}>'.format(self.id)
 
-class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
-    text = db.Column(db.String)
-    # user creator id
-    author = db.Column(db.Integer)
-    # user assignees id
-    assigned_to = db.Column(db.Integer)
-    published = db.Column(db.DateTime, nullable=False)
-    finish_date = db.Column(db.DateTime)
-    planned_finish_date = db.Column(db.DateTime)
-    planned_spent_time = db.Column(db.Integer)
-    # В часах
-    spent_time = db.Column(db.Integer)
-    board_id = db.Column(db.Integer)
-    status = db.Column(db.String)
 
-    def __repr__(self):
-        return '<Task {}>'.format(self.name)
-
-class Access(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer)
-    board_id = db.Column(db.Integer)
+class Access(Base):
+    id = Column(Integer, primary_key=True)
+    board_id = Column(Integer, ForeignKey(Board.id))
+    user_id = Column(Integer, ForeignKey(User.id))
 
     def __repr__(self):
         return '<Access {}>'.format(self.id)
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
-    password = db.Column(db.String(128))
-    fist_name = db.Column(db.String(64), index=True, unique=False)
-    last_name = db.Column(db.String(64), index=True, unique=False)
-    patronymic = db.Column(db.String(64), index=True, unique=False)
-    email = db.Column(db.String(64), index=True, unique=True)
-    position = db.Column(db.String(64), index=True, unique=False)
-    role = db.Column(db.String(10), index=True)
 
-    def __repr__(self):
-        return '<User {}>'.format(self.username)
     
 
 
