@@ -2,13 +2,18 @@ from flask import Flask, render_template
 from source.user.views import blueprint as user_blueprint
 
 
-def create_app():
-    app = Flask(__name__)
-    app.register_blueprint(user_blueprint)
+class Service:
+    def __init__(self, host=None, port=None, debug=None):
+        self.app = Flask(__name__)
 
-    @app.route("/")
-    def login_page():
-        title = "Авторизация"
-        return render_template("login.html", page_title=title)
+    def add_routes(self):
+        self.app.register_blueprint(user_blueprint)
 
-    return app
+    def start(self):
+        self.add_routes()
+        self.app.run()
+
+
+if __name__ == '__main__':
+    service = Service()
+    service.start()
