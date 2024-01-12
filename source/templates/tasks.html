@@ -1,6 +1,6 @@
-{% include "base.html" %}
-{% include "navbar.html" %}
+{% extends "base.html" %}
 
+{% block content%}
 <div class="container-xxl">
     <table class="table">
 
@@ -17,17 +17,21 @@
         </tr>
         </thead>
         <tbody>
+        {% for task in user_tasks %}
         <tr>
-            <th scope="row">1</th>
-            <td scope="col">Создание приложения</td>
-            <td scope="col">Petr</td>
-            <td scope="col">Ivan</td>
-            <td scope="col">А также непосредственные участники технического прогресса формируют глобальную экономическую сеть и при этом — разоблачены.</td>
-            <td scope="col">Открыта</td>
-            <td scope="col">01.01.2023</td>
-            <td scope="col">03.01.2023</td>
+            <td scope="col">{{ task.number_task }}</td>
+            <td scope="col">{{ task.title }}</td>
+            <td scope="col">{{ task.author }}</td>
+            <td scope="col">{{ task.performer }}</td>
+            <td scope="col">{{ task.description }}</td>
+            <td scope="col">{{ task.status }}</td>
+            <td scope="col">{{ task.starttime }}</td>
+            <td scope="col">{{ task.endtime }}</td>
+
         </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>
 
+{% endblock %}
