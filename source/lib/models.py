@@ -1,10 +1,12 @@
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
-from config import SQLALCHEMY_DATABASE_URI
-from db import DB
+from sqlalchemy.ext.declarative import declarative_base
 
-Base = DB(SQLALCHEMY_DATABASE_URI)
+Base = declarative_base()
+
 
 class User(Base):
+    __tablename__ = "user"
+
     id = Column(Integer, primary_key=True)
     login = Column(String(64), index=True, unique=True)
     password = Column(String(128))
@@ -18,7 +20,10 @@ class User(Base):
     def __repr__(self):
         return '<User {}>'.format(self.login)
 
+
 class Board(Base):
+    __tablename__ = "board"
+
     id = Column(Integer(), primary_key=True)
     title = Column(String(64)) 
     # user id
@@ -27,7 +32,10 @@ class Board(Base):
     def __repr__(self):
         return '<Board {}>'.format(self.title)
 
+
 class Task(Base):
+    __tablename__ = "task"
+
     id = Column(Integer, primary_key=True)
     board_id = Column(Integer, ForeignKey(Board.id))
     title = Column(String(64))
@@ -49,28 +57,25 @@ class Task(Base):
 
 
 class Comment(Base):
+    __tablename__ = "comment"
+
     id = Column(Integer, primary_key=True)
     task_id = Column(Integer, ForeignKey(Task.id))
     # user id
     author = Column(Integer, ForeignKey(User.id))
     text = Column(String)
     published = Column(Date, nullable=False)
-    
 
     def __repr__(self):
         return '<Comment {}>'.format(self.id)
 
 
 class Access(Base):
+    __tablename__ = "access"
+
     id = Column(Integer, primary_key=True)
     board_id = Column(Integer, ForeignKey(Board.id))
     user_id = Column(Integer, ForeignKey(User.id))
 
     def __repr__(self):
         return '<Access {}>'.format(self.id)
-
-
-    
-
-
-

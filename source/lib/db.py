@@ -1,48 +1,69 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
+
+from ...config import SQLALCHEMY_DATABASE_URI
 
 from sqlalchemy.exc import OperationalError, NoSuchModuleError
 
+from models import User
+
+
+class DBError(Exception):
+    """Ошибка работы с БД"""
 
 
 class DB:
-    def __init__(self, connect_data: str) -> None:
-        self.connect_data = connect_data
-        self.db_session = None
+    def __init__(self, URL: str) -> None:
+        self.URL = URL
+        self.session = None
         self.engine = None
         self.base = None
         self.connection = None
 
     def connect(self) -> object:
-        # подключение к базе данных
-        self.engine = create_engine(self.connect_data)
-        # проверка подключения
         try:
-            connection = self.engine.connect()
-            return connection
+            self.engine = create_engine(self.URL)
+            self.engine.connect()
+            self.create_session()
+
         except OperationalError:
-            print('Ошибка в логине, пароле, адресе сервера или самой БД')
-            return None
+            raise DBError('Ошибка в логине, пароле, адресе сервера или самой БД')
         except NoSuchModuleError:
-            print('Не правильно задан модуль БД')
-            return None
-        
-    def session(self) -> None:
-        # Создание сессии
-        if self.engine:
-            self.db_session = scoped_session(sessionmaker(bind=self.engine))
-            self.base = declarative_base()
-            self.base.query = self.db_session.query_property()
-        else:
-            print("DB is not connected")
+            raise DBError('Не правильно задан модуль БД')
+
+    def create_session(self) -> None:
+        self.session = scoped_session(sessionmaker(bind=self.engine))
 
     def close(self) -> None:
         # Закрытие сессии
-        if self.db_session:
-            self.db_session.close()
-        if self.engine:  
+        if self.session:
+            self.session.close()
+        if self.engine:
             self.engine.dispose()
 
     def __repr__(self) -> str:
         return '<DB {}>'.format(self.connect_data)
+
+    def get_users(self) -> list:
+        self.connect()
+
+        return self.session.query(User).first().fist_name
+
+    def add_user(self) -> None:
+        self.connect()
+        user = User(
+            login="kek",
+            email="kek",
+            fist_name="kek",
+            last_name="kek",
+            patronymic="kek",
+            position="kek",
+            role="kek",
+        )
+        self.session.add(user)
+        self.session.commit()
+
+
+db = DB(SQLALCHEMY_DATABASE_URI)
+
+print(db.add_user())
