@@ -1,8 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from config import SQLALCHEMY_DATABASE_URI
-
 from sqlalchemy.exc import OperationalError, NoSuchModuleError
 
 from models import User, Board, Task, Comment, Access
@@ -22,31 +20,34 @@ class DB:
 
     def connect(self) -> object:
         try:
-            self.engine = create_engine(self.URL)
-            self.engine.connect()
-            self.create_session()
+            if self.connection is None:
+                self.engine = create_engine(self.URL)
+                self.connection = self.engine.connect()
 
         except OperationalError:
-            raise DBError('Ошибка в логине, пароле, адресе сервера или самой БД')
+            raise DBError('Ошибка в логине, пароле или адресе БД')
         except NoSuchModuleError:
             raise DBError('Не правильно задан модуль БД')
 
     def create_session(self) -> None:
         self.session = scoped_session(sessionmaker(bind=self.engine))
 
-    def close(self) -> None:
-        # Закрытие сессии
-        if self.session:
-            self.session.close()
-        if self.engine:
-            self.engine.dispose()
-
     def __repr__(self) -> str:
-        return '<DB {}>'.format(self.connect_data)
+        return '<DB {}>'.format(self.URL)
 
     # Функция для добавления пользователя
-    def add_user(self, login, email, fist_name, last_name, patronymic, position, role) -> None:
+    def add_user(
+        self,
+        login: str,
+        email: str,
+        fist_name: str,
+        last_name: str,
+        patronymic: str,
+        position: str,
+        role: str
+    ) -> None:
         self.connect()
+        self.create_session()
         user = User(
             login=login,
             email=email,
@@ -58,6 +59,7 @@ class DB:
         )
         self.session.add(user)
         self.session.commit()
+        self.session.close()
 
     # Функция для запроса всех пользователей
     def get_users(self) -> list:
@@ -65,14 +67,20 @@ class DB:
         return self.session.query(User).all()
 
     # Функция для добавления доски
-    def add_board(self, title, owner) -> None:
+    def add_board(
+        self,
+        title: str,
+        owner: int
+    ) -> None:
         self.connect()
+        self.create_session()
         board = Board(
             title=title,
             owner=owner
         )
         self.session.add(board)
         self.session.commit()
+        self.session.close()
 
     # Функция для запроса всех досок
     def get_board(self) -> list:
@@ -80,10 +88,22 @@ class DB:
         return self.session.query(Board).all()
 
     # Функция для добавления задачи
-    def add_task(self, board_id, title, description, author, assigned_to, 
-                 published, finish_date, planned_finish_date, planned_spent_time,
-                 spent_time, status) -> None:
+    def add_task(
+        self,
+        board_id: int,
+        title: str,
+        description: str,
+        author: int,
+        assigned_to: int,
+        published: str,
+        finish_date: str,
+        planned_finish_date: str,
+        planned_spent_time: str,
+        spent_time: int,
+        status: str
+     ) -> None:
         self.connect()
+        self.create_session()
         task = Task(
             board_id=board_id,
             title=title,
@@ -99,6 +119,7 @@ class DB:
         )
         self.session.add(task)
         self.session.commit()
+        self.session.close()
 
     # Функция для запроса всех задач
     def get_task(self) -> list:
@@ -106,8 +127,15 @@ class DB:
         return self.session.query(Task).all()
 
     # Функция для добавления комментария
-    def add_comment(self, task_id, author, text, published) -> None:
+    def add_comment(
+        self,
+        task_id: int,
+        author: int,
+        text: str,
+        published: str
+    ) -> None:
         self.connect()
+        self.create_session()
         comment = Comment(
             task_id=task_id,
             author=author,
@@ -116,6 +144,7 @@ class DB:
         )
         self.session.add(comment)
         self.session.commit()
+        self.session.close()
 
     # Функция для запроса всех комментариев
     def get_comment(self) -> list:
@@ -123,20 +152,22 @@ class DB:
         return self.session.query(Comment).all()
 
     # Функция для добавления доступа
-    def add_access(self, board_id, user_id) -> None:
+    def add_access(
+        self,
+        board_id: int,
+        user_id: int
+    ) -> None:
         self.connect()
+        self.create_session()
         access = Access(
             board_id=board_id,
             user_id=user_id
         )
         self.session.add(access)
         self.session.commit()
+        self.session.close()
 
     # Функция для запроса всех доступов
     def get_access(self) -> list:
         self.connect()
-        return self.session.query(Access).all()  
-
-db = DB(SQLALCHEMY_DATABASE_URI)
-
-#db.add_user('Vasya12344', '<EMAIL14>', 'Vasya14', 'Pupkin14', 'Pupkovic14', 'Developer', 'user')
+        return self.session.query(Access).all()

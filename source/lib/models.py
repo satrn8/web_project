@@ -13,7 +13,7 @@ class User(Base):
     email = Column(String(64), index=True, unique=True)
     fist_name = Column(String(64), index=True, unique=False)
     last_name = Column(String(64), index=True, unique=False)
-    patronymic = Column(String(64), index=True, unique=False)   
+    patronymic = Column(String(64), index=True, unique=False)
     position = Column(String(64), index=True, unique=False)
     role = Column(String(10), index=True)
 
@@ -25,7 +25,7 @@ class Board(Base):
     __tablename__ = "board"
 
     id = Column(Integer(), primary_key=True)
-    title = Column(String(64)) 
+    title = Column(String(64))
     # user id
     owner = Column(Integer, ForeignKey(User.id))
 
