@@ -1,5 +1,6 @@
-from flask import Flask, render_template
-from source.user.views import blueprint as user_blueprint
+from flask import Flask
+from source.user.task import blueprint as task_blueprint
+from source.user.dashboard import blueprint as dashboard_blueprint
 
 
 class Service:
@@ -7,7 +8,8 @@ class Service:
         self.app = Flask(__name__)
 
     def add_routes(self):
-        self.app.register_blueprint(user_blueprint)
+        self.app.register_blueprint(dashboard_blueprint)
+        self.app.register_blueprint(task_blueprint)
 
     def start(self):
         self.add_routes()
