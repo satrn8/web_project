@@ -1,48 +1,173 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from sqlalchemy.exc import OperationalError, NoSuchModuleError
 
+from models import User, Board, Task, Comment, Access
+
+
+class DBError(Exception):
+    """Ошибка работы с БД"""
 
 
 class DB:
-    def __init__(self, connect_data: str) -> None:
-        self.connect_data = connect_data
-        self.db_session = None
+    def __init__(self, URL: str) -> None:
+        self.URL = URL
+        self.session = None
         self.engine = None
         self.base = None
         self.connection = None
 
     def connect(self) -> object:
-        # подключение к базе данных
-        self.engine = create_engine(self.connect_data)
-        # проверка подключения
         try:
-            connection = self.engine.connect()
-            return connection
-        except OperationalError:
-            print('Ошибка в логине, пароле, адресе сервера или самой БД')
-            return None
-        except NoSuchModuleError:
-            print('Не правильно задан модуль БД')
-            return None
-        
-    def session(self) -> None:
-        # Создание сессии
-        if self.engine:
-            self.db_session = scoped_session(sessionmaker(bind=self.engine))
-            self.base = declarative_base()
-            self.base.query = self.db_session.query_property()
-        else:
-            print("DB is not connected")
+            if self.connection is None:
+                self.engine = create_engine(self.URL)
+                self.connection = self.engine.connect()
 
-    def close(self) -> None:
-        # Закрытие сессии
-        if self.db_session:
-            self.db_session.close()
-        if self.engine:  
-            self.engine.dispose()
+        except OperationalError:
+            raise DBError('Ошибка в логине, пароле или адресе БД')
+        except NoSuchModuleError:
+            raise DBError('Не правильно задан модуль БД')
+
+    def create_session(self) -> None:
+        self.session = scoped_session(sessionmaker(bind=self.engine))
 
     def __repr__(self) -> str:
-        return '<DB {}>'.format(self.connect_data)
+        return '<DB {}>'.format(self.URL)
+
+    # Функция для добавления пользователя
+    def add_user(
+        self,
+        login: str,
+        email: str,
+        fist_name: str,
+        last_name: str,
+        patronymic: str,
+        position: str,
+        role: str
+    ) -> None:
+        self.connect()
+        self.create_session()
+        user = User(
+            login=login,
+            email=email,
+            fist_name=fist_name,
+            last_name=last_name,
+            patronymic=patronymic,
+            position=position,
+            role=role,
+        )
+        self.session.add(user)
+        self.session.commit()
+        self.session.close()
+
+    # Функция для запроса всех пользователей
+    def get_users(self) -> list:
+        self.connect()
+        return self.session.query(User).all()
+
+    # Функция для добавления доски
+    def add_board(
+        self,
+        title: str,
+        owner: int
+    ) -> None:
+        self.connect()
+        self.create_session()
+        board = Board(
+            title=title,
+            owner=owner
+        )
+        self.session.add(board)
+        self.session.commit()
+        self.session.close()
+
+    # Функция для запроса всех досок
+    def get_board(self) -> list:
+        self.connect()
+        return self.session.query(Board).all()
+
+    # Функция для добавления задачи
+    def add_task(
+        self,
+        board_id: int,
+        title: str,
+        description: str,
+        author: int,
+        assigned_to: int,
+        published: str,
+        finish_date: str,
+        planned_finish_date: str,
+        planned_spent_time: str,
+        spent_time: int,
+        status: str
+     ) -> None:
+        self.connect()
+        self.create_session()
+        task = Task(
+            board_id=board_id,
+            title=title,
+            description=description,
+            author=author,
+            assigned_to=assigned_to,
+            published=published,
+            finish_date=finish_date,
+            planned_finish_date=planned_finish_date,
+            planned_spent_time=planned_spent_time,
+            spent_time=spent_time,
+            status=status
+        )
+        self.session.add(task)
+        self.session.commit()
+        self.session.close()
+
+    # Функция для запроса всех задач
+    def get_task(self) -> list:
+        self.connect()
+        return self.session.query(Task).all()
+
+    # Функция для добавления комментария
+    def add_comment(
+        self,
+        task_id: int,
+        author: int,
+        text: str,
+        published: str
+    ) -> None:
+        self.connect()
+        self.create_session()
+        comment = Comment(
+            task_id=task_id,
+            author=author,
+            text=text,
+            published=published
+        )
+        self.session.add(comment)
+        self.session.commit()
+        self.session.close()
+
+    # Функция для запроса всех комментариев
+    def get_comment(self) -> list:
+        self.connect()
+        return self.session.query(Comment).all()
+
+    # Функция для добавления доступа
+    def add_access(
+        self,
+        board_id: int,
+        user_id: int
+    ) -> None:
+        self.connect()
+        self.create_session()
+        access = Access(
+            board_id=board_id,
+            user_id=user_id
+        )
+        self.session.add(access)
+        self.session.commit()
+        self.session.close()
+
+    # Функция для запроса всех доступов
+    def get_access(self) -> list:
+        self.connect()
+        return self.session.query(Access).all()
