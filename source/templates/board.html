@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content%}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">id</th>
+        <th scope="col">Название</th>
+        <th scope="col">id владелеца</th>
+        <th scope="col">Владелец</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for board in all_boards %}
+    <tr>
+        <td scope="col">{{ board.id }}</td>
+        <td scope="col">{{ board.title }}</td>
+        <td scope="col">{{ board.owner }}</td>
+        <td scope="col">{{ board.first_name }} {{ board.last_name}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
