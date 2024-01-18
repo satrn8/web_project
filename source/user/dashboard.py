@@ -1,9 +1,9 @@
 from flask import render_template, Blueprint
 
-blueprint = Blueprint("user", __name__, url_prefix="/users")
+blueprint = Blueprint("dashboard", __name__, url_prefix="/users")
 
 
-@blueprint.route("/dashboard.html")
+@blueprint.route("/dashboard")
 def get_dashboards():
     create = [
         {"number_task": 1, "author": "Иван",
