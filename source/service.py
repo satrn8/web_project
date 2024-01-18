@@ -1,6 +1,7 @@
 from flask import Flask
 from source.user.task import blueprint as task_blueprint
 from source.user.dashboard import blueprint as dashboard_blueprint
+from source.board.views import blueprint as board_blueprint
 
 
 class Service:
@@ -10,10 +11,11 @@ class Service:
     def add_routes(self):
         self.app.register_blueprint(dashboard_blueprint)
         self.app.register_blueprint(task_blueprint)
+        self.app.register_blueprint(board_blueprint)
 
     def start(self):
         self.add_routes()
-        self.app.run()
+        self.app.run(debug=True)
 
 
 if __name__ == '__main__':
