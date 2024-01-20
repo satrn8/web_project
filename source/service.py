@@ -1,7 +1,7 @@
 from flask import Flask
 from source.user.task import blueprint as task_blueprint
-from source.user.dashboard import blueprint as dashboard_blueprint
-from source.board.views import blueprint as board_blueprint
+from source.dashboard.views import blueprint as dashboard_blueprint
+from source.boards.views import blueprint as board_blueprint
 
 
 class Service:

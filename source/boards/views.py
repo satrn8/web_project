@@ -7,12 +7,11 @@ data_base = DB(SQLALCHEMY_DATABASE_URI)
 
 
 @blueprint.route("/")
-def get_boards():
+def get_all_boards():
     all_boards = data_base.get_boards()
-    print(all_boards)
     title = "Доски"
     return render_template(
-        "board.html",
+        "boards.html",
         page_title=title,
         all_boards=all_boards
     )

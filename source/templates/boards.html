@@ -13,10 +13,14 @@
     <tbody>
     {% for board in all_boards %}
     <tr>
-        <td scope="col">{{ board.id }}</td>
-        <td scope="col">{{ board.title }}</td>
-        <td scope="col">{{ board.owner }}</td>
-        <td scope="col">{{ board.first_name }} {{ board.last_name}}</td>
+        <td>{{ board.id }}</td>
+        <td>
+            <a href="/dashboard/{{ board.id }}">
+                {{ board.title }}
+            </a>
+        </td>
+        <td>{{ board.owner }}</td>
+        <td>{{ board.first_name }} {{ board.last_name}}</td>
     </tr>
     {% endfor %}
     </tbody>

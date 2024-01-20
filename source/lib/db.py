@@ -82,6 +82,16 @@ class DB:
         self.session.commit()
         self.session.close()
 
+    # Функция для запроса доски
+    def get_board(self, id: int) -> list:
+        self.connect()
+        self.create_session()
+        get_query = self.session.query(Board).get(id)
+        # извлекаем название доски
+        board_title = get_query.title
+        self.session.close()
+        return board_title
+
     # Функция для запроса всех досок
     def get_boards(self) -> list:
         self.connect()
