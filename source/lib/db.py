@@ -3,7 +3,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from sqlalchemy.exc import OperationalError, NoSuchModuleError
 
-from models import User, Board, Task, Comment, Access
+from source.lib.models import User, Board, Task, Comment, Access
 
 
 class DBError(Exception):
@@ -82,10 +82,29 @@ class DB:
         self.session.commit()
         self.session.close()
 
-    # Функция для запроса всех досок
-    def get_board(self) -> list:
+    # Функция для запроса доски
+    def get_board(self, id: int) -> list:
         self.connect()
-        return self.session.query(Board).all()
+        self.create_session()
+        get_query = self.session.query(Board).get(id)
+        # извлекаем название доски
+        board_title = get_query.title
+        self.session.close()
+        return board_title
+
+    # Функция для запроса всех досок
+    def get_boards(self) -> list:
+        self.connect()
+        self.create_session()
+        get_query = self.session.query(
+            Board.__table__,
+            User.first_name,
+            User.last_name)\
+            .join(User, Board.owner == User.id)\
+            .order_by(Board.title)\
+            .all()
+        self.session.close()
+        return get_query
 
     # Функция для добавления задачи
     def add_task(

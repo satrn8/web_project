@@ -1,9 +1,9 @@
 from flask import render_template, Blueprint
 
-blueprint = Blueprint("user", __name__, url_prefix="/users")
+blueprint = Blueprint("task", __name__, url_prefix="/users")
 
 
-@blueprint.route("/tasks.html")
+@blueprint.route("/tasks")
 def get_task():
     user_tasks = [
         {"number_task": 34, "title": "Создание приложения", "author": "Максим", "performer": "Иван",

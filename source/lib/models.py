@@ -11,7 +11,7 @@ class User(Base):
     login = Column(String(64), index=True, unique=True)
     password = Column(String(128))
     email = Column(String(64), index=True, unique=True)
-    fist_name = Column(String(64), index=True, unique=False)
+    first_name = Column(String(64), index=True, unique=False)
     last_name = Column(String(64), index=True, unique=False)
     patronymic = Column(String(64), index=True, unique=False)
     position = Column(String(64), index=True, unique=False)

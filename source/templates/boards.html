@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content%}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">id</th>
+        <th scope="col">Название</th>
+        <th scope="col">id владелеца</th>
+        <th scope="col">Владелец</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for board in all_boards %}
+    <tr>
+        <td>{{ board.id }}</td>
+        <td>
+            <a href="{{ url_for('dashboard.get_dashboard', board_id=board.id) }}">
+                {{ board.title }}
+            </a>
+        </td>
+        <td>{{ board.owner }}</td>
+        <td>{{ board.first_name }} {{ board.last_name}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
