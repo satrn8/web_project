@@ -61,10 +61,10 @@ def process_reg():
             login=form.login.data,
             email=form.email.data,
             password=form.password.data,
-            first_name='Алексей',
-            last_name='Петров',
-            patronymic='Иванович',
-            position='Администратор',
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            patronymic=form.patronymic.data,
+            position=form.position.data,
             role='user'
         )
         flash('Вы успешно зарегистрировались!')

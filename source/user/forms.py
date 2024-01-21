@@ -33,12 +33,12 @@ class LoginForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     login = StringField(
-        'Логин пользователя',
+        'Логин',
         validators=[DataRequired()],
         render_kw={"class": "form-control"}
     )
     email = StringField(
-        'Email',
+        'E-mail',
         validators=[DataRequired(), Email()],
         render_kw={"class": "form-control"}
     )
@@ -52,6 +52,26 @@ class RegistrationForm(FlaskForm):
         validators=[DataRequired(), EqualTo('password')],
         render_kw={"class": "form-control"}
         )
+    first_name = StringField(
+        'Имя',
+        validators=[DataRequired()],
+        render_kw={"class": "form-control"}
+    )
+    last_name = StringField(
+        'Фамилия',
+        validators=[DataRequired()],
+        render_kw={"class": "form-control"}
+    )
+    patronymic = StringField(
+        'Отчество',
+        validators=[DataRequired()],
+        render_kw={"class": "form-control"}
+    )
+    position = StringField(
+        'Должность',
+        validators=[DataRequired()],
+        render_kw={"class": "form-control"}
+    )
     submit = SubmitField(
         'Отправить!',
         render_kw={"class": "btn btn-primary"}
