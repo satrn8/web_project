@@ -5,13 +5,13 @@ from sqlalchemy.exc import OperationalError, NoSuchModuleError
 
 from source.lib.models import User, Board, Task, Comment, Access
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
+
 
 class DBError(Exception):
     """Ошибка работы с БД"""
 
 
-class DB:
+class DB():
     def __init__(self, URL: str) -> None:
         self.URL = URL
         self.session = None
@@ -37,24 +37,38 @@ class DB:
         return '<DB {}>'.format(self.URL)
 
 
-class User_DB(DB, UserMixin):
-    # Функция для добавления пользователя
+class User_DB(DB):
+    def __init__(self, URL: str):
+        super().__init__(URL)
+        self.login = None
+        self.email = None
+        self.password = None
+        self.first_name = None
+        self.last_name = None
+        self.patronymic = None
+        self.position = None
+        self.role = None
+
+    # Функция для добавления пользователя в БД
     def add_user(
         self,
         login: str,
         email: str,
-        fist_name: str,
+        password: str,
+        first_name: str,
         last_name: str,
         patronymic: str,
         position: str,
-        role: str = "user"
+        role: str
     ) -> None:
         self.connect()
         self.create_session()
+        hash_password = self.set_password(password)
         user = User(
             login=login,
             email=email,
-            fist_name=fist_name,
+            password=hash_password,
+            first_name=first_name,
             last_name=last_name,
             patronymic=patronymic,
             position=position,
@@ -64,24 +78,52 @@ class User_DB(DB, UserMixin):
         self.session.commit()
         self.session.close()
 
-    # Функция для проверки пользователя
-    def get_user(self, email: str, password: str) -> list:
+    # Функция для получения пользователя по id
+    def get_user(self, user_id: int) -> object:
         self.connect()
         self.create_session()
-        user = self.session.query(User).filter(User.email == email).first()
-        print(user)
+        user = self.session.query(User).filter(User.id == user_id).first()
         self.session.close()
-        if user:
-            true_password = user.password
-        #if check_password_hash(true_password, password):
-        if true_password == password:
-            print('check_password_успех')
+        return user
+
+    # Функция для превращения пароля в хеш
+    def set_password(self, password):
+        return generate_password_hash(password, method='pbkdf2:sha256:600000')
+
+    # Функция для сравнения пароля с хеш паролем из БД
+    def check_password(self, true_password, password):
+        return check_password_hash(true_password, password)
+
+    # Функция для проверки пользователя
+    def validate_user(self, login: str, password: str) -> list:
+        self.connect()
+        self.create_session()
+        user = self.session.query(User).filter(User.login == login).first()
+        self.session.close()
+        if check_password_hash(user.password, password):
             return user
         else:
             return None
 
-    def check_password(self, true_password, password):
-        return check_password_hash(true_password, password)
+    # Функция для подсчета пользователей с одинаковым логином
+    def login_counter(self, login: str) -> int:
+        self.connect()
+        self.create_session()
+        login_count = self.session.query(User)\
+            .filter(User.login == login)\
+            .count()
+        self.session.close()
+        return login_count
+
+    # Функция для подсчета пользователей с одинаковым email
+    def email_counter(self, email: str) -> int:
+        self.connect()
+        self.create_session()
+        email_count = self.session.query(User)\
+            .filter(User.email == email)\
+            .count()
+        self.session.close()
+        return email_count
 
 
 class Board_DB(DB):
@@ -105,11 +147,11 @@ class Board_DB(DB):
     def get_board(self, id: int) -> list:
         self.connect()
         self.create_session()
-        get_query = self.session.query(Board).get(id)
+        self.get_query = self.session.query(Board).get(id)
         # извлекаем название доски
-        board_title = get_query.title
+        self.board_title = self.get_query.title
         self.session.close()
-        return board_title
+        return self.board_title
 
     # Функция для запроса всех досок
     def get_boards(self) -> list:
@@ -166,6 +208,7 @@ class Task_DB(DB):
         self.connect()
         return self.session.query(Task).all()
 
+
 class Comment_DB(DB):
     # Функция для добавления комментария
     def add_comment(
@@ -191,6 +234,7 @@ class Comment_DB(DB):
     def get_comment(self) -> list:
         self.connect()
         return self.session.query(Comment).all()
+
 
 class Access_DB(DB):
     # Функция для добавления доступа
