@@ -4,7 +4,8 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.exc import OperationalError, NoSuchModuleError
 
 from source.lib.models import User, Board, Task, Comment, Access
-
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 class DBError(Exception):
     """Ошибка работы с БД"""
@@ -35,6 +36,8 @@ class DB:
     def __repr__(self) -> str:
         return '<DB {}>'.format(self.URL)
 
+
+class User_DB(DB, UserMixin):
     # Функция для добавления пользователя
     def add_user(
         self,
@@ -44,7 +47,7 @@ class DB:
         last_name: str,
         patronymic: str,
         position: str,
-        role: str
+        role: str = "user"
     ) -> None:
         self.connect()
         self.create_session()
@@ -61,11 +64,27 @@ class DB:
         self.session.commit()
         self.session.close()
 
-    # Функция для запроса всех пользователей
-    def get_users(self) -> list:
+    # Функция для проверки пользователя
+    def get_user(self, email: str, password: str) -> list:
         self.connect()
-        return self.session.query(User).all()
+        self.create_session()
+        user = self.session.query(User).filter(User.email == email).first()
+        print(user)
+        self.session.close()
+        if user:
+            true_password = user.password
+        #if check_password_hash(true_password, password):
+        if true_password == password:
+            print('check_password_успех')
+            return user
+        else:
+            return None
 
+    def check_password(self, true_password, password):
+        return check_password_hash(true_password, password)
+
+
+class Board_DB(DB):
     # Функция для добавления доски
     def add_board(
         self,
@@ -106,6 +125,8 @@ class DB:
         self.session.close()
         return get_query
 
+
+class Task_DB(DB):
     # Функция для добавления задачи
     def add_task(
         self,
@@ -145,6 +166,7 @@ class DB:
         self.connect()
         return self.session.query(Task).all()
 
+class Comment_DB(DB):
     # Функция для добавления комментария
     def add_comment(
         self,
@@ -170,6 +192,7 @@ class DB:
         self.connect()
         return self.session.query(Comment).all()
 
+class Access_DB(DB):
     # Функция для добавления доступа
     def add_access(
         self,
