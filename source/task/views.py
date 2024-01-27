@@ -6,8 +6,10 @@ blueprint = Blueprint("tasks", __name__, url_prefix="/tasks")
 data_base = Task_DB(connection_url)
 
 
-@blueprint.route("/tasks")
+@blueprint.route("/")
 def get_task():
-    task = data_base.get_task()
+    tasks = data_base.get_task()
     title = "Задачи"
-    return render_template("tasks.html", title=title, task=task)
+    return render_template("tasks.html", title=title, tasks=tasks)
+
+
