@@ -3,7 +3,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from sqlalchemy.exc import OperationalError, NoSuchModuleError
 
-from source.lib.models import User, Board, Task, Comment, Access
+from lib.models import User, Board, Task, Comment, Access
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -206,7 +206,17 @@ class Task_DB(DB):
     # Функция для запроса всех задач
     def get_task(self) -> list:
         self.connect()
-        return self.session.query(Task).all()
+        self.create_session()
+        get_query = self.session.query(
+            Task.title,
+            Task.description,
+            User.first_name,
+            User.last_name)\
+            .join(User, Task.assigned_to == User.id)\
+            .order_by(Task.description)\
+            .all()
+        self.session.close()
+        return get_query
 
 
 class Comment_DB(DB):
