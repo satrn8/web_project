@@ -19,12 +19,12 @@
         {% for task in tasks %}
         <tr>
             <td scope="col">{{ task.title }}</td>
-            <td scope="col">{{ task.author }}</td>
+            <td scope="col">{{ task.first_name }} {{ task.last_name }}</td>
             <td scope="col">{{ task.assigned_to }}</td>
             <td scope="col">{{ task.description }}</td>
             <td scope="col">{{ task.status }}</td>
+            <td scope="col">{{ task.published }}</td>
             <td scope="col">{{ task.finish_date }}</td>
-            <td scope="col">{{ task.planned_finish_date }}</td>
 
         </tr>
         {% endfor %}

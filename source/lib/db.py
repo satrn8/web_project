@@ -210,10 +210,14 @@ class Task_DB(DB):
         get_query = self.session.query(
             Task.title,
             Task.description,
+            Task.status,
+            Task.author,
+            Task.published,
+            Task.assigned_to,
+            Task.finish_date,
             User.first_name,
             User.last_name)\
-            .join(User, Task.assigned_to == User.id)\
-            .order_by(Task.description)\
+            .join(User, Task.author == User.id)\
             .all()
         self.session.close()
         return get_query
