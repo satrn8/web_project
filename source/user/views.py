@@ -1,8 +1,8 @@
 from flask import render_template, Blueprint, flash, redirect, url_for
 from flask_login import current_user, login_user, logout_user
-from source.user.forms import LoginForm, RegistrationForm
-from source.lib.db import User_DB
-from source.lib.config import SQLALCHEMY_DATABASE_URI
+from user.forms import LoginForm, RegistrationForm
+from lib.db import User_DB
+from lib.config import SQLALCHEMY_DATABASE_URI
 
 blueprint = Blueprint("user", __name__, url_prefix="/user")
 data_base = User_DB(SQLALCHEMY_DATABASE_URI)

@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint
-from source.lib.db import Board_DB
-from source.lib.config import SQLALCHEMY_DATABASE_URI
+from lib.db import Board_DB
+from lib.config import SQLALCHEMY_DATABASE_URI
 
 blueprint = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 data_base = Board_DB(SQLALCHEMY_DATABASE_URI)

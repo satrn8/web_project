@@ -19,10 +19,10 @@
         <tbody>
         {% for task in user_tasks %}
         <tr>
-            <td scope="col">{{ task.number_task }}</td>
+            <td scope="col">{{ task.id }}</td>
             <td scope="col">{{ task.title }}</td>
             <td scope="col">{{ task.author }}</td>
-            <td scope="col">{{ task.performer }}</td>
+            <td scope="col">{{ task.assigned_to }}</td>
             <td scope="col">{{ task.description }}</td>
             <td scope="col">{{ task.status }}</td>
             <td scope="col">{{ task.starttime }}</td>

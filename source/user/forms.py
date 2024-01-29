@@ -2,8 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 
-from source.lib.db import User_DB
-from source.lib.config import SQLALCHEMY_DATABASE_URI
+from lib.db import User_DB
+from lib.config import SQLALCHEMY_DATABASE_URI
 
 
 data_base = User_DB(SQLALCHEMY_DATABASE_URI)
