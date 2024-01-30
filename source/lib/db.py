@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker, aliased
 
 from sqlalchemy.exc import OperationalError, NoSuchModuleError
 
@@ -207,20 +207,28 @@ class Task_DB(DB):
     def get_task(self) -> list:
         self.connect()
         self.create_session()
-        get_query = self.session.query(
+        Author = aliased(User, name='author')
+        AssignedTo = aliased(User, name='assigned_to')
+        query = self.session.query(
             Task.title,
-            Task.description,
             Task.status,
+            Task.description,
             Task.author,
             Task.published,
             Task.assigned_to,
             Task.finish_date,
-            User.first_name,
-            User.last_name)\
-            .join(User, Task.author == User.id)\
-            .all()
+            Author.first_name.label('author_first_name'),
+            Author.last_name.label('author_last_name'),
+            AssignedTo.first_name.label('assigned_to_first_name'),
+            AssignedTo.last_name.label('assigned_to_last_name')
+            ).join(
+            Author, Task.author == Author.id
+            ).join(
+            AssignedTo, Task.assigned_to == AssignedTo.id
+            )
+        tasks = query.all()
         self.session.close()
-        return get_query
+        return tasks
 
 
 class Comment_DB(DB):
