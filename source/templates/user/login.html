@@ -12,7 +12,7 @@
                 </div>
                 {% endif %}
             {% endwith %}
-            <form action="{{ url_for('user.process_login') }}" method="post">
+            <form action="{{ url_for('user.process_login', next=next) }}" method="post">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
                     {{ form.login.label }}<br>
@@ -31,5 +31,5 @@
         </div>
         <div class="col-8">
         </div>
-    </div>    
+    </div> 
 {% endblock %}
