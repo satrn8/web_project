@@ -7,6 +7,7 @@ from lib.config import SQLALCHEMY_DATABASE_URI
 blueprint = Blueprint("task", __name__, url_prefix="/tasks")
 data_base = Task_DB(SQLALCHEMY_DATABASE_URI)
 
+
 @blueprint.route("/")
 @login_required
 def get_task():
