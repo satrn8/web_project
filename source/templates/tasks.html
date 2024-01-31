@@ -6,7 +6,6 @@
 
         <thead>
         <tr>
-            <th scope="col">id Задачи</th>
             <th scope="col">Название</th>
             <th scope="col">Автор</th>
             <th scope="col">Исполнитель</th>
@@ -17,16 +16,15 @@
         </tr>
         </thead>
         <tbody>
-        {% for task in user_tasks %}
+        {% for task in tasks %}
         <tr>
-            <td scope="col">{{ task.number_task }}</td>
             <td scope="col">{{ task.title }}</td>
-            <td scope="col">{{ task.author }}</td>
-            <td scope="col">{{ task.performer }}</td>
+            <td scope="col">{{ task.author_first_name }} {{ task.author_last_name }}</td>
+            <td scope="col">{{ task.assigned_to_first_name }} {{ task.assigned_to_last_name }}</td>
             <td scope="col">{{ task.description }}</td>
             <td scope="col">{{ task.status }}</td>
-            <td scope="col">{{ task.starttime }}</td>
-            <td scope="col">{{ task.endtime }}</td>
+            <td scope="col">{{ task.published }}</td>
+            <td scope="col">{{ task.finish_date }}</td>
 
         </tr>
         {% endfor %}

@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker, aliased
 
 from sqlalchemy.exc import OperationalError, NoSuchModuleError
 
-from source.lib.models import User, Board, Task, Comment, Access
+from lib.models import User, Board, Task, Comment, Access
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -206,7 +206,29 @@ class Task_DB(DB):
     # Функция для запроса всех задач
     def get_task(self) -> list:
         self.connect()
-        return self.session.query(Task).all()
+        self.create_session()
+        Author = aliased(User, name='author')
+        AssignedTo = aliased(User, name='assigned_to')
+        query = self.session.query(
+            Task.title,
+            Task.status,
+            Task.description,
+            Task.author,
+            Task.published,
+            Task.assigned_to,
+            Task.finish_date,
+            Author.first_name.label('author_first_name'),
+            Author.last_name.label('author_last_name'),
+            AssignedTo.first_name.label('assigned_to_first_name'),
+            AssignedTo.last_name.label('assigned_to_last_name')
+            ).join(
+            Author, Task.author == Author.id
+            ).join(
+            AssignedTo, Task.assigned_to == AssignedTo.id
+            )
+        tasks = query.all()
+        self.session.close()
+        return tasks
 
 
 class Comment_DB(DB):
