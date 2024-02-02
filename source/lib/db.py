@@ -230,6 +230,14 @@ class Task_DB(DB):
         self.session.close()
         return tasks
 
+    def change_status(self, task_id: int, task_status: str) -> None:
+        self.connect()
+        self.create_session()
+        task = self.session.query(Task).get(task_id)
+        task.status = task_status
+        self.session.commit()
+        self.session.close()
+
 
 class Comment_DB(DB):
     # Функция для добавления комментария
