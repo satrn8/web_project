@@ -252,6 +252,7 @@ class Task_DB(DB):
                 Access.board_id == Board.id,
                 Access.user_id == current_user.id)
             )\
+            .filter(Task.assigned_to == current_user.id)\
             .all()
         self.session.close()
         return user_tasks

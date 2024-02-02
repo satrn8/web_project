@@ -12,7 +12,7 @@ data_base = Task_DB(SQLALCHEMY_DATABASE_URI)
 def get_dashboard(board_id):
     dashboard = data_base.get_tasks(board_id)
     title = "Доска"
-    return render_template("dashboard.html", title=title, dashboard=dashboard)
+    return render_template("dashboard.html", page_title=title, dashboard=dashboard, board_id=board_id)
 
 
 @blueprint.route("/change_status", methods=["GET"])

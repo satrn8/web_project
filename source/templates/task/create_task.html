@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+<style>
+    .description {
+      height: 100px; 
+    }
+</style>
+{% block content%}
+    <div class="row">
+        <div class="col-4">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="alert alert-warning" role="alert">
+                    {% for message in messages %}
+                        {{ message }}<br>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('task.process_create_task', board_id=board_id) }}" method="post">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.title.label }}<br>
+                    {{ form.title() }}
+                </div>
+                <div class="form-group">
+                    {{ form.description.label }}<br>
+                    {{ form.description() }}
+                </div>
+                <div>
+                    <br>
+                </div>
+                {{ form.submit }}
+            </form>
+        </div>
+        <div class="col-8">
+        </div>
+    </div> 
+
+{% endblock %}
