@@ -210,6 +210,7 @@ class Task_DB(DB):
         Author = aliased(User, name='author')
         AssignedTo = aliased(User, name='assigned_to')
         query = self.session.query(
+            Task.id,
             Task.title,
             Task.status,
             Task.description,
