@@ -20,6 +20,7 @@ def get_my_task():
         user_tasks=user_tasks
     )
 
+
 @blueprint.route("/new/<int:board_id>")
 @login_required
 def new_task(board_id):
