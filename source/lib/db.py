@@ -225,7 +225,7 @@ class Task_DB(DB):
             Author, Task.author == Author.id
             ).join(
             AssignedTo, Task.assigned_to == AssignedTo.id
-            )
+            ).filter(Task.status == Task.status)
         tasks = query.all()
         self.session.close()
         return tasks
