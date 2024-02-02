@@ -214,13 +214,14 @@ class Task_DB(DB):
         self.session.close()
 
     # Функция для запроса всех задач на доске
-    def get_tasks(self) -> list:
+    def get_tasks(self, board_id) -> list:
         self.connect()
         self.create_session()
         Author = aliased(User, name='author')
         AssignedTo = aliased(User, name='assigned_to')
         query = self.session.query(
             Task.id,
+            Task.board_id,
             Task.title,
             Task.status,
             Task.description,
@@ -232,11 +233,11 @@ class Task_DB(DB):
             Author.last_name.label('author_last_name'),
             AssignedTo.first_name.label('assigned_to_first_name'),
             AssignedTo.last_name.label('assigned_to_last_name')
-            ).join(
-            Author, Task.author == Author.id
-            ).join(
-            AssignedTo, Task.assigned_to == AssignedTo.id
-            ).filter(Task.status == Task.status)
+            )\
+            .join(Author, Task.author == Author.id)\
+            .join(AssignedTo, Task.assigned_to == AssignedTo.id)\
+            .filter(Task.status == Task.status)\
+            .filter(Task.board_id == board_id)
         tasks = query.all()
         self.session.close()
         return tasks

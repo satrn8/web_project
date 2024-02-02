@@ -19,10 +19,10 @@
                             </a>
 
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Открыта') }}">Открыта</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='В процессе') }}">В процессе</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Выполнена') }}">Выполнена</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Закрыта') }}">Закрыта</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Открыта', board_id=task.board_id) }}">Открыта</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='В процессе', board_id=task.board_id) }}">В процессе</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Выполнена', board_id=task.board_id) }}">Выполнена</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Закрыта', board_id=task.board_id) }}">Закрыта</a></li>
                             </ul>
                         </div>
                 </div>
@@ -46,10 +46,10 @@
                         </a>
 
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Открыта') }}">Открыта</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='В процессе') }}">В процессе</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Выполнена') }}">Выполнена</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Закрыта') }}">Закрыта</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Открыта', board_id=task.board_id) }}">Открыта</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='В процессе', board_id=task.board_id) }}">В процессе</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Выполнена', board_id=task.board_id) }}">Выполнена</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Закрыта', board_id=task.board_id) }}">Закрыта</a></li>
                         </ul>
                     </div>
                 </div>
@@ -72,10 +72,10 @@
                         </a>
 
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Открыта') }}">Открыта</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='В процессе') }}">В процессе</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Выполнена') }}">Выполнена</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Закрыта') }}">Закрыта</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Открыта', board_id=task.board_id) }}">Открыта</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='В процессе', board_id=task.board_id) }}">В процессе</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Выполнена', board_id=task.board_id) }}">Выполнена</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Закрыта', board_id=task.board_id) }}">Закрыта</a></li>
                         </ul>
                     </div>
                 </div>
@@ -96,10 +96,10 @@
                         </a>
 
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Открыта') }}">Открыта</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='В процессе') }}">В процессе</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Выполнена') }}">Выполнена</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Закрыта') }}">Закрыта</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Открыта', board_id=task.board_id) }}">Открыта</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='В процессе', board_id=task.board_id) }}">В процессе</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Выполнена', board_id=task.board_id) }}">Выполнена</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.change_status', task_id=task.id, task_status='Закрыта', board_id=task.board_id) }}">Закрыта</a></li>
                         </ul>
                     </div>
                 </div>
