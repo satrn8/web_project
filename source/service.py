@@ -7,13 +7,14 @@ from flask_login import LoginManager
 from lib.db import User_DB
 from lib.config import SQLALCHEMY_DATABASE_URI
 
+
 data_base = User_DB(SQLALCHEMY_DATABASE_URI)
 
 
 class Service:
     def __init__(self, host=None, port=None, debug=None):
         self.app = Flask(__name__)
-        self.app.config.from_pyfile("lib\config.py")
+        self.app.config.from_pyfile("lib/config.py")
         self.login_manager = LoginManager()
         self.login_manager.init_app(self.app)
         self.login_manager.login_view = 'user.login'

@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker, aliased
 from sqlalchemy.sql import and_
 
 
@@ -217,15 +217,28 @@ class Task_DB(DB):
     def get_tasks(self) -> list:
         self.connect()
         self.create_session()
-        user_tasks = self.session.query(Task)\
-            .join(Board, Task.board_id == Board.id)\
-            .join(Access, and_(
-                Access.board_id == Board.id,
-                Access.user_id == current_user.id)
-            )\
-            .all()
+        Author = aliased(User, name='author')
+        AssignedTo = aliased(User, name='assigned_to')
+        query = self.session.query(
+            Task.title,
+            Task.status,
+            Task.description,
+            Task.author,
+            Task.published,
+            Task.assigned_to,
+            Task.finish_date,
+            Author.first_name.label('author_first_name'),
+            Author.last_name.label('author_last_name'),
+            AssignedTo.first_name.label('assigned_to_first_name'),
+            AssignedTo.last_name.label('assigned_to_last_name')
+            ).join(
+            Author, Task.author == Author.id
+            ).join(
+            AssignedTo, Task.assigned_to == AssignedTo.id
+            ).filter(Task.status == Task.status)
+        tasks = query.all()
         self.session.close()
-        return user_tasks
+        return tasks
 
 
 class Comment_DB(DB):
