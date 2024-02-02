@@ -1,11 +1,11 @@
-from flask import render_template, Blueprint, flash, redirect, url_for
+from flask import render_template, Blueprint, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user
 from user.forms import LoginForm, RegistrationForm
 from lib.db import User_DB
-from lib.config import connection_url
+from lib.config import SQLALCHEMY_DATABASE_URI
 
 blueprint = Blueprint("user", __name__, url_prefix="/user")
-data_base = User_DB(connection_url)
+data_base = User_DB(SQLALCHEMY_DATABASE_URI)
 
 
 @blueprint.route("/login")
@@ -14,10 +14,12 @@ def login():
         return redirect(url_for('board.get_all_boards'))
     title = "Авторизация"
     login_form = LoginForm()
+    next_url = request.args.get('next')
     return render_template(
         "user/login.html",
         page_title=title,
-        form=login_form
+        form=login_form,
+        next=next_url
     )
 
 
@@ -27,7 +29,10 @@ def process_login():
     if form.validate_on_submit():
         user = data_base.validate_user(form.login.data, form.password.data)
         if user:
+            next_page = request.args.get('next')
             login_user(user, remember=form.remember_me.data)
+            if next_page:
+                return redirect(next_page)
             return redirect(url_for('board.get_all_boards'))
     flash('Неправильное имя пользователя или пароль')
     return redirect(url_for('user.login'))

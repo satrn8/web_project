@@ -3,10 +3,10 @@ from wtforms import BooleanField, PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 
 from lib.db import User_DB
-from lib.config import connection_url
+from lib.config import SQLALCHEMY_DATABASE_URI
 
 
-data_base = User_DB(connection_url)
+data_base = User_DB(SQLALCHEMY_DATABASE_URI)
 
 
 class LoginForm(FlaskForm):

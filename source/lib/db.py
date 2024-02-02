@@ -1,10 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, aliased
+from sqlalchemy.sql import and_
+
 
 from sqlalchemy.exc import OperationalError, NoSuchModuleError
 
 from lib.models import User, Board, Task, Comment, Access
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from flask_login import current_user
 
 
 class DBError(Exception):
@@ -100,10 +104,11 @@ class User_DB(DB):
         self.create_session()
         user = self.session.query(User).filter(User.login == login).first()
         self.session.close()
-        if check_password_hash(user.password, password):
-            return user
-        else:
-            return None
+        if user:
+            if check_password_hash(user.password, password):
+                return user
+            else:
+                return None
 
     # Функция для подсчета пользователей с одинаковым логином
     def login_counter(self, login: str) -> int:
@@ -162,6 +167,11 @@ class Board_DB(DB):
             User.first_name,
             User.last_name)\
             .join(User, Board.owner == User.id)\
+            .join(
+                Access,
+                and_(Access.board_id == Board.id,
+                     Access.user_id == current_user.id)
+            )\
             .order_by(Board.title)\
             .all()
         self.session.close()
@@ -203,14 +213,15 @@ class Task_DB(DB):
         self.session.commit()
         self.session.close()
 
-    # Функция для запроса всех задач
-    def get_task(self) -> list:
+    # Функция для запроса всех задач на доске
+    def get_tasks(self, board_id) -> list:
         self.connect()
         self.create_session()
         Author = aliased(User, name='author')
         AssignedTo = aliased(User, name='assigned_to')
         query = self.session.query(
             Task.id,
+            Task.board_id,
             Task.title,
             Task.status,
             Task.description,
@@ -222,14 +233,29 @@ class Task_DB(DB):
             Author.last_name.label('author_last_name'),
             AssignedTo.first_name.label('assigned_to_first_name'),
             AssignedTo.last_name.label('assigned_to_last_name')
-            ).join(
-            Author, Task.author == Author.id
-            ).join(
-            AssignedTo, Task.assigned_to == AssignedTo.id
-            ).filter(Task.status == Task.status)
+            )\
+            .join(Author, Task.author == Author.id)\
+            .join(AssignedTo, Task.assigned_to == AssignedTo.id)\
+            .filter(Task.status == Task.status)\
+            .filter(Task.board_id == board_id)
         tasks = query.all()
         self.session.close()
         return tasks
+
+    # Функция для запроса всех задач пользователя
+    def get_my_tasks(self) -> list:
+        self.connect()
+        self.create_session()
+        user_tasks = self.session.query(Task)\
+            .join(Board, Task.board_id == Board.id)\
+            .join(Access, and_(
+                Access.board_id == Board.id,
+                Access.user_id == current_user.id)
+            )\
+            .filter(Task.assigned_to == current_user.id)\
+            .all()
+        self.session.close()
+        return user_tasks
 
     def change_status(self, task_id: int, task_status: str) -> None:
         self.connect()
