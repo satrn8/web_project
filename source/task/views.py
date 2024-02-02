@@ -10,8 +10,8 @@ data_base = Task_DB(SQLALCHEMY_DATABASE_URI)
 
 @blueprint.route("/")
 @login_required
-def get_task():
-    user_tasks = data_base.get_tasks()
+def get_my_task():
+    user_tasks = data_base.get_my_tasks()
     title = "Задачи"
     return render_template(
         "task/tasks.html",

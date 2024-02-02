@@ -213,7 +213,7 @@ class Task_DB(DB):
         self.session.commit()
         self.session.close()
 
-    # Функция для запроса всех задач
+    # Функция для запроса всех задач на доске
     def get_tasks(self) -> list:
         self.connect()
         self.create_session()
@@ -239,6 +239,20 @@ class Task_DB(DB):
         tasks = query.all()
         self.session.close()
         return tasks
+
+    # Функция для запроса всех задач пользователя
+    def get_my_tasks(self) -> list:
+        self.connect()
+        self.create_session()
+        user_tasks = self.session.query(Task)\
+            .join(Board, Task.board_id == Board.id)\
+            .join(Access, and_(
+                Access.board_id == Board.id,
+                Access.user_id == current_user.id)
+            )\
+            .all()
+        self.session.close()
+        return user_tasks
 
 
 class Comment_DB(DB):
