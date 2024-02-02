@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker, aliased
 from sqlalchemy.sql import and_
 
 
@@ -213,8 +213,37 @@ class Task_DB(DB):
         self.session.commit()
         self.session.close()
 
-    # Функция для запроса всех задач
-    def get_tasks(self) -> list:
+    # Функция для запроса всех задач на доске
+    def get_tasks(self, board_id) -> list:
+        self.connect()
+        self.create_session()
+        Author = aliased(User, name='author')
+        AssignedTo = aliased(User, name='assigned_to')
+        query = self.session.query(
+            Task.id,
+            Task.board_id,
+            Task.title,
+            Task.status,
+            Task.description,
+            Task.author,
+            Task.published,
+            Task.assigned_to,
+            Task.finish_date,
+            Author.first_name.label('author_first_name'),
+            Author.last_name.label('author_last_name'),
+            AssignedTo.first_name.label('assigned_to_first_name'),
+            AssignedTo.last_name.label('assigned_to_last_name')
+            )\
+            .join(Author, Task.author == Author.id)\
+            .join(AssignedTo, Task.assigned_to == AssignedTo.id)\
+            .filter(Task.status == Task.status)\
+            .filter(Task.board_id == board_id)
+        tasks = query.all()
+        self.session.close()
+        return tasks
+
+    # Функция для запроса всех задач пользователя
+    def get_my_tasks(self) -> list:
         self.connect()
         self.create_session()
         user_tasks = self.session.query(Task)\
@@ -223,9 +252,18 @@ class Task_DB(DB):
                 Access.board_id == Board.id,
                 Access.user_id == current_user.id)
             )\
+            .filter(Task.assigned_to == current_user.id)\
             .all()
         self.session.close()
         return user_tasks
+
+    def change_status(self, task_id: int, task_status: str) -> None:
+        self.connect()
+        self.create_session()
+        task = self.session.query(Task).get(task_id)
+        task.status = task_status
+        self.session.commit()
+        self.session.close()
 
 
 class Comment_DB(DB):
