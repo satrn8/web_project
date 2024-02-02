@@ -220,6 +220,7 @@ class Task_DB(DB):
         Author = aliased(User, name='author')
         AssignedTo = aliased(User, name='assigned_to')
         query = self.session.query(
+            Task.id,
             Task.title,
             Task.status,
             Task.description,
@@ -253,6 +254,14 @@ class Task_DB(DB):
             .all()
         self.session.close()
         return user_tasks
+
+    def change_status(self, task_id: int, task_status: str) -> None:
+        self.connect()
+        self.create_session()
+        task = self.session.query(Task).get(task_id)
+        task.status = task_status
+        self.session.commit()
+        self.session.close()
 
 
 class Comment_DB(DB):
