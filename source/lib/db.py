@@ -243,19 +243,48 @@ class Task_DB(DB):
         return tasks
 
     # Функция для запроса всех задач пользователя
-    def get_my_tasks(self) -> list:
+    def get_my_tasks(self) -> list: 
         self.connect()
         self.create_session()
-        user_tasks = self.session.query(Task)\
-            .join(Board, Task.board_id == Board.id)\
-            .join(Access, and_(
-                Access.board_id == Board.id,
-                Access.user_id == current_user.id)
+        Author = aliased(User, name='author')
+        AssignedTo = aliased(User, name='assigned_to')
+        query = self.session.query(
+            Task.id,
+            Task.board_id,
+            Task.title,
+            Task.status,
+            Task.description,
+            Task.author,
+            Task.published,
+            Task.assigned_to,
+            Task.finish_date,
+            Author.first_name.label('author_first_name'),
+            Author.last_name.label('author_last_name'),
+            AssignedTo.first_name.label('assigned_to_first_name'),
+            AssignedTo.last_name.label('assigned_to_last_name')
             )\
-            .filter(Task.assigned_to == current_user.id)\
-            .all()
+            .join(Author, Task.author == Author.id)\
+            .join(AssignedTo, Task.assigned_to == AssignedTo.id)\
+            .filter(Task.status == Task.status)\
+            .filter(Task.assigned_to == current_user.id)
+        tasks = query.all()
         self.session.close()
-        return user_tasks
+        return tasks
+
+
+
+        #self.connect()
+        #self.create_session()
+        #user_tasks = self.session.query(Task)\
+        #    .join(Board, Task.board_id == Board.id)\
+        #    .join(Access, and_(
+        #        Access.board_id == Board.id,
+        #        Access.user_id == current_user.id)
+        #    )\
+        #    .filter(Task.assigned_to == current_user.id)\
+        #    .all()
+        #self.session.close()
+        #return user_tasks
 
     def change_status(self, task_id: int, task_status: str) -> None:
         self.connect()
